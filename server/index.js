@@ -3,9 +3,10 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 dotenv.config();
-import bcrypt from "bcrypt";
 
-import User from "./models/User.js";
+import jwt from "jsonwebtoken";
+
+import { postLogin, postSignup } from "./controllers/user.js";
 
 const app = express();
 app.use(express.json());
@@ -27,65 +28,36 @@ app.get("/health", (req, res) => {
   });
 });
 
-app.post("/signup", async (req, res) => {
-  const { name, email, phone, address, password, rePassword } = req.body;
+app.post("/signup", postSignup);
+app.post("/login", postLogin);
 
-  if (!password) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Password is required" });
+app.get("/test", (req, res) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
   }
 
-  if (password !== rePassword) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Passwords does not match" });
-  }
-
-  if (!name) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Name is required" });
-  }
-
-  if (!email) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Email is required" });
-  }
-
-  if (!phone) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Phone is required" });
-  }
-
-  if (!address) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Address is required" });
-  }
-
-  const salt = bcrypt.genSaltSync(10);
+  const tokenValue = token.split(" ")[1];
 
   try {
-    const newUser = new User({
-      name,
-      email,
-      phone,
-      address,
-      password: bcrypt.hashSync(password, salt),
-    });
+    const decoded = jwt.verify(tokenValue, process.env.JWT_SECRET);
 
-    const savedUser = await newUser.save();
-
-    return res.json({
-      success: true,
-      message: "Signup successful",
-      data: savedUser,
-    });
+    if (decoded) {
+      res.json({
+        success: true,
+        message: "Authorized",
+        data: decoded,
+      });
+    }
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message });
+    res.status(401).json({
+      success: false,
+      message: "Unauthorized",
+    });
   }
 });
 

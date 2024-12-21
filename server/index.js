@@ -18,6 +18,8 @@ import {
   jwtVerifyMiddleware,
 } from "./middlewares/auth.js";
 
+import { responder } from "./utils/utils.js";
+
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -32,10 +34,7 @@ const connectDB = async () => {
 };
 
 app.get("/health", (req, res) => {
-  res.json({
-    success: true,
-    message: "Server is running",
-  });
+  return responder(res, true, "Server is running");
 });
 
 // Auth
@@ -56,9 +55,7 @@ app.get("/orders/user/:id", jwtVerifyMiddleware, getOrdersByUserId);
 app.post("/payments", postPayments);
 
 app.use("*", (req, res) => {
-  res
-    .status(404)
-    .json({ success: false, message: "API endpoint doesn't exist" });
+  return responder(res, false, "API endpoint doesn't exist", null, 404);
 });
 
 const PORT = process.env.PORT || 5002;

@@ -40,7 +40,6 @@ const postOrders = async (req, res) => {
 
 const putOrders = async (req, res) => {
   const user = req.user;
-  console.log(user);
   const { id } = req.params;
 
   let order;
@@ -58,6 +57,7 @@ const putOrders = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message });
   }
 
+  // user can only update his own order
   if(user.role=="user" && order.userId!=user._id){
     return res.status(401).json({
       success: false,
@@ -81,6 +81,10 @@ const putOrders = async (req, res) => {
 
   if (req.body.phone) {
     order.phone = req.body.phone;
+  }
+
+  if (req.body.deliveryAddress) {
+    order.deliveryAddress = req.body.deliveryAddress;
   }
 
   if(user.role=="admin"){

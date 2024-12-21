@@ -11,6 +11,7 @@ import {
   jwtVerifyMiddleware,
 } from "./middlewares/auth.js";
 import { postOrders, putOrders } from "./controllers/order.js";
+import { postPayments } from "./controllers/payment.js";
 
 const app = express();
 app.use(express.json());
@@ -42,6 +43,8 @@ app.get("/products", getProdcuts);
 
 app.post("/orders", jwtVerifyMiddleware, postOrders);
 app.put("/orders/:id", jwtVerifyMiddleware, putOrders);
+
+app.post("/payments", postPayments);
 
 app.use("*", (req, res) => {
   res

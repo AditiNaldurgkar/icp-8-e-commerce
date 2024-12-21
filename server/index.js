@@ -10,7 +10,7 @@ import {
   checkRoleMiddleware,
   jwtVerifyMiddleware,
 } from "./middlewares/auth.js";
-import { postOrders, putOrders } from "./controllers/order.js";
+import { postOrders, putOrders, getOrderById } from "./controllers/order.js";
 import { postPayments } from "./controllers/payment.js";
 
 const app = express();
@@ -41,9 +41,13 @@ app.post("/login", postLogin);
 app.post("/products", jwtVerifyMiddleware, checkRoleMiddleware, postProducts);
 app.get("/products", getProdcuts);
 
+// Orders
 app.post("/orders", jwtVerifyMiddleware, postOrders);
 app.put("/orders/:id", jwtVerifyMiddleware, putOrders);
+app.get("/orders/:id", jwtVerifyMiddleware, getOrderById);
 
+
+// Payments
 app.post("/payments", postPayments);
 
 app.use("*", (req, res) => {

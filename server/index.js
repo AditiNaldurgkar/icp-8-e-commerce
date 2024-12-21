@@ -4,14 +4,19 @@ import express from "express";
 import mongoose from "mongoose";
 dotenv.config();
 
+import {
+  getOrderById,
+  getOrdersByUserId,
+  postOrders,
+  putOrders,
+} from "./controllers/order.js";
+import { postPayments } from "./controllers/payment.js";
 import { getProdcuts, postProducts } from "./controllers/product.js";
 import { postLogin, postSignup } from "./controllers/user.js";
 import {
   checkRoleMiddleware,
   jwtVerifyMiddleware,
 } from "./middlewares/auth.js";
-import { postOrders, putOrders, getOrderById } from "./controllers/order.js";
-import { postPayments } from "./controllers/payment.js";
 
 const app = express();
 app.use(express.json());
@@ -45,7 +50,7 @@ app.get("/products", getProdcuts);
 app.post("/orders", jwtVerifyMiddleware, postOrders);
 app.put("/orders/:id", jwtVerifyMiddleware, putOrders);
 app.get("/orders/:id", jwtVerifyMiddleware, getOrderById);
-
+app.get("/orders/user/:id", jwtVerifyMiddleware, getOrdersByUserId);
 
 // Payments
 app.post("/payments", postPayments);

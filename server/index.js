@@ -4,13 +4,13 @@ import express from "express";
 import mongoose from "mongoose";
 dotenv.config();
 
-
+import { getProdcuts, postProducts } from "./controllers/product.js";
 import { postLogin, postSignup } from "./controllers/user.js";
 import {
-  jwtVerifyMiddleware,
   checkRoleMiddleware,
+  jwtVerifyMiddleware,
 } from "./middlewares/auth.js";
-import {postProducts} from "./controllers/product.js";
+import { postOrders, putOrders } from "./controllers/order.js";
 
 const app = express();
 app.use(express.json());
@@ -38,7 +38,10 @@ app.post("/login", postLogin);
 
 // Product
 app.post("/products", jwtVerifyMiddleware, checkRoleMiddleware, postProducts);
+app.get("/products", getProdcuts);
 
+app.post("/orders", jwtVerifyMiddleware, postOrders);
+app.put("/orders/:id", jwtVerifyMiddleware, putOrders);
 
 app.use("*", (req, res) => {
   res

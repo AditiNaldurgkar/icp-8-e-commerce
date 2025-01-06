@@ -1,14 +1,31 @@
-import { Bluetooth as BluetoothIcon, Home as HomeIcon } from "lucide-react";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+import Home from "./views/Home";
+import Login from "./views/Login";
+import Signup from "./views/Signup";
+import NotFound from "./views/404";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <>
-    <h1 className="text-red-500">E-Commerce</h1>
-    <HomeIcon size="64" />
 
-    <BluetoothIcon size={100} strokeWidth={1} />
-  </>
-);
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
+  },
+]);
+
+root.render(<RouterProvider router={router} />);

@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
-import User from "./../models/User.js";
 import jwt from "jsonwebtoken";
+import User from "./../models/User.js";
 
 const postSignup = async (req, res) => {
   const { name, email, phone, address, password, rePassword } = req.body;
@@ -56,7 +56,7 @@ const postSignup = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Signup successful",
+      message: "Signup successful, please login",
       data: {
         name: savedUser.name,
         email: savedUser.email,
@@ -65,6 +65,15 @@ const postSignup = async (req, res) => {
       },
     });
   } catch (error) {
+    if (error.message.includes("duplicate key error")) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `${Object.keys(error.keyValue)} '${Object.values(error.keyValue)}' already exists`,
+        });
+    }
+
     return res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -72,19 +81,26 @@ const postSignup = async (req, res) => {
 const postLogin = async (req, res) => {
   const { email, password } = req.body;
 
-  if(!email || !password) {
-    return res.status(400).json({ success: false, message: "Email and password are required" });
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Email and password are required" });
   }
 
-  const user = await User.findOne({email});
+  const user = await User.findOne({ email });
 
-  if(!user) {
-    return res.status(400).json({ success: false, message: "Please signup first before logging in" });
+  if (!user) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Please signup first before logging in",
+      });
   }
 
   const isPasswordMatch = bcrypt.compareSync(password, user.password);
 
-  if (isPasswordMatch){
+  if (isPasswordMatch) {
     const jwtToken = jwt.sign(
       { email: user.email, role: user.role, _id: user._id },
       process.env.JWT_SECRET
@@ -95,12 +111,13 @@ const postLogin = async (req, res) => {
     return res.json({
       success: true,
       token: jwtToken,
-      message: "Login successful"
+      message: "Login successful",
     });
+  } else {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid credentials" });
   }
-  else{
-    return res.status(400).json({ success: false, message: "Invalid credentials" });
-  }
-}
+};
 
-export { postSignup, postLogin };
+export { postLogin, postSignup };

@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { getCurrentUser } from "../utils/common";
 
 function Login() {
   const [loginData, setLoginData] = useState({
@@ -23,6 +24,10 @@ function Login() {
       );
 
       localStorage.setItem("e-commerce-user-token", response.data.token);
+      localStorage.setItem(
+        "e-commerce-user-details",
+        JSON.stringify(response.data.data)
+      );
 
       toast.dismiss();
 
@@ -43,8 +48,20 @@ function Login() {
     }
   };
 
+  useEffect(()=>{
+    // Check if user is already logged in
+    const currentUser = getCurrentUser();
+
+    if (currentUser) {
+      toast.success("You are already logged in. Redirecting to dashboard...");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 3000);
+    }
+  }, [])
+
   return (
-    <div className="bg-zinc-100 min-h-screen flex flex-col items-center justify-center px-5">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5">
       <h1 className="text-3xl mb-4 text-gray-600">Login</h1>
 
       <div className="w-full md:w-[450px] bg-white rounded-2xl shadow-lg hover:shadow-xl px-10 py-6">

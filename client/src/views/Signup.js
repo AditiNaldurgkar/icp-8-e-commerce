@@ -1,9 +1,10 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { Link } from "react-router-dom";
+import { getCurrentUser } from "../utils/common";
 
 function Signup() {
   const [signupData, setSignupData] = useState({
@@ -41,7 +42,6 @@ function Signup() {
       setTimeout(() => {
         window.location.href = "/login";
       }, 3000);
-
     } catch (err) {
       toast.dismiss();
       setError(err?.response?.data?.message);
@@ -49,8 +49,20 @@ function Signup() {
     }
   };
 
+  useEffect(() => {
+    // Check if user is already logged in
+    const currentUser = getCurrentUser();
+
+    if (currentUser) {
+      toast.success("You are already logged in. Redirecting to dashboard...");
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 3000);
+    }
+  }, []);
+
   return (
-    <div className="bg-zinc-100 min-h-screen flex flex-col items-center justify-center px-5">
+    <div className="min-h-screen flex flex-col items-center justify-center px-5">
       <h1 className="text-3xl mb-4 text-gray-600">Signup</h1>
 
       <div className="w-full md:w-[450px] bg-white rounded-2xl shadow-lg hover:shadow-xl px-10 py-6">
@@ -113,7 +125,10 @@ function Signup() {
         <p className="text-red-500 text-xs mt-2">{error}</p>
 
         <p>
-          Already have an account?{" "} <Link to="/login" className="text-blue-500">Login</Link>
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-500">
+            Login
+          </Link>
         </p>
 
         <div className="flex justify-around mt-6">

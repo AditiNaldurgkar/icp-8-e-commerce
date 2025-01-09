@@ -2,10 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
+import NotFound from "./views/404";
+import Dashboard from "./views/Dashboard";
 import Home from "./views/Home";
 import Login from "./views/Login";
 import Signup from "./views/Signup";
-import NotFound from "./views/404";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -23,9 +24,17 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: "/dashboard",
+    element: <Dashboard />,
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
 ]);
 
-root.render(<RouterProvider router={router} />);
+root.render(
+  <div className="bg-zinc-100 min-h-screen">
+    <RouterProvider router={router} />
+  </div>
+);

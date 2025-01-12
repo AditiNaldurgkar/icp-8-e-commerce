@@ -26,4 +26,16 @@ const logout = () => {
   }, 2000);
 };
 
-export { getCurrentUser, getJwtToken, logout };
+const getReadableTimestamp = (date) => {
+  const dateObj = new Date(date);
+
+  const datePart = `${dateObj.getDate()}/${
+    dateObj.getMonth() + 1
+  }/${dateObj.getFullYear()}`;
+  const timePart = `${dateObj.getHours()}:${dateObj.getMinutes()}`;
+  const amOrPm = dateObj.getHours() >= 12 ? "PM" : "AM";
+
+  return `${datePart} ${timePart} ${amOrPm}`;
+};
+
+export { getCurrentUser, getJwtToken, logout, getReadableTimestamp };

@@ -2,11 +2,11 @@ import React from "react";
 
 import { getReadableTimestamp } from "../utils/common";
 
-function OrderCard({ order }) {
+function OrderCard({ order, onClick }) {
   const { _id, status, products, createdAt, totalBill, deliveryAddress } =
     order;
   return (
-    <div className="border p-4 m-4 bg-white relative rounded-md">
+    <div className="border p-4 m-4 bg-white relative rounded-md" onClick={onClick}>
       <p>
         Order ID: {_id}, Ordered On: {getReadableTimestamp(createdAt)}
       </p>

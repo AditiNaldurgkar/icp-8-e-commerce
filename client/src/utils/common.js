@@ -38,4 +38,21 @@ const getReadableTimestamp = (date) => {
   return `${datePart} ${timePart} ${amOrPm}`;
 };
 
-export { getCurrentUser, getJwtToken, logout, getReadableTimestamp };
+
+const shortText = (text, maxLength = 50) => {
+  if (!text) {
+    return " ";
+  }
+
+  if(text.length <= maxLength) {
+    return text;
+  }
+
+  let shortText = text.substring(0, maxLength - 3);
+
+  shortText += "...";
+
+  return shortText;
+};
+
+export { getCurrentUser, getJwtToken, getReadableTimestamp, logout, shortText };

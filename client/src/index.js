@@ -8,6 +8,7 @@ import Home from "./views/Home";
 import Login from "./views/Login";
 import Signup from "./views/Signup";
 import UserOrders from "./views/UserOrders";
+import Cart from "./views/Cart";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: "/user/orders",
     element: <UserOrders />,
+  },
+  {
+    path: "/user/cart",
+    element: <Cart />,
   },
   {
     path: "*",

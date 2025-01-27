@@ -7,8 +7,10 @@ import {
 import React, { useState } from "react";
 import { shortText } from "../utils/common";
 import Button from "./Button";
+import toast from "react-hot-toast";
 
 function ProductCard({
+  _id,
   name,
   price,
   currentPrice,
@@ -31,6 +33,36 @@ function ProductCard({
     const currentIndex = images.indexOf(currentImage);
     const newIndex = currentIndex < images.length - 1 ? currentIndex + 1 : 0;
     setCurrentImage(images[newIndex]);
+  };
+
+  const handleAddToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+    const product = {
+      productId: _id,
+      name: name,
+      image: currentImage,
+      quantity: quantity,
+      price: currentPrice,
+    };
+
+    let exitingProductIndex = -1;
+
+    cart.forEach((item, index) => {
+      if (item.productId === _id) {
+        exitingProductIndex = index;
+      }
+    });
+
+    if (exitingProductIndex > -1) {
+      cart[exitingProductIndex].quantity = quantity;
+    } else {
+      cart.push(product);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    toast.success("Product added to cart");
   };
 
   return (
@@ -84,7 +116,11 @@ function ProductCard({
       </div>
 
       <div className="flex justify-center mt-5">
-        <Button label="Add To Cart" variant="primary" />
+        <Button
+          label="Add To Cart"
+          variant="primary"
+          onClick={handleAddToCart}
+        />
       </div>
     </div>
   );

@@ -153,6 +153,7 @@ const getOrdersByUserId = async (req, res) => {
   }
 
   const orders = await Order.find({ userId: id })
+    .sort({ createdAt: -1 })
     .populate("userId", "name email")
     .populate(
       "products.productId",

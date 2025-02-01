@@ -1,6 +1,6 @@
 import Product from "../models/Product.js";
 
-const postProducts = async(req, res) => {
+const postProducts = async (req, res) => {
   const {
     name,
     shortDescription,
@@ -9,13 +9,20 @@ const postProducts = async(req, res) => {
     currentPrice,
     category,
     images,
-    tags
+    tags,
   } = req.body;
 
-  const mandatoryFields = ["name", "shortDescription", "longDescription", "price", "category", "images"];
+  const mandatoryFields = [
+    "name",
+    "shortDescription",
+    "longDescription",
+    "price",
+    "category",
+    "images",
+  ];
 
-  for(const field of mandatoryFields) {
-    if(!req.body[field]) {
+  for (const field of mandatoryFields) {
+    if (!req.body[field]) {
       return res
         .status(400)
         .json({ success: false, message: `${field} is required` });
@@ -30,48 +37,57 @@ const postProducts = async(req, res) => {
     currentPrice,
     category,
     images,
-    tags
+    tags,
   });
 
-  try{
+  try {
     const savedProduct = await newProduct.save();
 
     return res.json({
       success: true,
       message: "Product created successfully",
-      data: savedProduct
+      data: savedProduct,
     });
-  }
-  catch(e){
-    return res
-      .status(400)
-      .json({ success: false, message: e.message });
+  } catch (e) {
+    return res.status(400).json({ success: false, message: e.message });
   }
 };
 
-const getProdcuts = async(req, res)=>{
-  const {limit, search} = req.query;
+const getProdcuts = async (req, res) => {
+  const { limit } = req.query;
+
+  let { search } = req.query;
+
+  search = search.replaceAll("\\", "");
 
   const products = await Product.find({
-    name: {
-      $regex: new RegExp(search || ""),
-      $options: "i",
-    },
-    shortDescription: {
-      $regex: new RegExp(search || ""),
-      $options: "i",
-    },
-    longDescription: {
-      $regex: new RegExp(search || ""),
-      $options: "i",
-    },
+    $or: [
+      {
+        name: {
+          $regex: new RegExp(search || ""),
+          $options: "i",
+        },
+      },
+      {
+        shortDescription: {
+          $regex: new RegExp(search || ""),
+          $options: "i",
+        },
+      },
+      {
+        longDescription: {
+          $regex: new RegExp(search || ""),
+          $options: "i",
+        },
+      },
+    ],
   }).limit(parseInt(limit || 100));
 
   return res.json({
     success: true,
     data: products,
-    message: "Products fetched successfully"
+    message: "Products fetched successfully",
   });
-}
+};
 
-export { postProducts, getProdcuts };
+export { getProdcuts, postProducts };

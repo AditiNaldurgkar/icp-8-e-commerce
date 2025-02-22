@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import session from "express-session";
 import mongoose from "mongoose";
 dotenv.config();
 
@@ -22,7 +23,20 @@ import { responder } from "./utils/utils.js";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
+app.use(
+  session({
+    secret: "test secret",
+    cookie: { maxAge: 1000 * 60 * 60, httpOnly: false, secure: false },
+  })
+);
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -33,7 +47,7 @@ const connectDB = async () => {
   }
 };
 
-app.get("/health", (req, res) => {
+app.get("/health", jwtVerifyMiddleware, (req, res) => {
   return responder(res, true, "Server is running");
 });
 

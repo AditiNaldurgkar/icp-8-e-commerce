@@ -2,11 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import OrderCard from "../components/OrderCard";
-import {
-  getCurrentUser,
-  getJwtToken,
-  getReadableTimestamp,
-} from "../utils/common";
+import { getCurrentUser, getReadableTimestamp, api } from "../utils/common";
 
 function UserOrders() {
   const [user, setUser] = useState({});
@@ -18,14 +14,7 @@ function UserOrders() {
     }
 
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/orders/user/${user._id}`,
-        {
-          headers: {
-            Authorization: getJwtToken(),
-          },
-        }
-      );
+      const response = await api.get(`/orders/user/${user._id}`);
 
       setOrders(response.data.data);
     } catch (error) {

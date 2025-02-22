@@ -1,10 +1,9 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { getCurrentUser } from "../utils/common";
+import { api, getCurrentUser } from "../utils/common";
 
 function Login() {
   const [loginData, setLoginData] = useState({
@@ -18,10 +17,7 @@ function Login() {
     toast.loading("Please wait...");
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/login`,
-        loginData
-      );
+      const response = await api.post(`/login`, loginData);
 
       localStorage.setItem("e-commerce-user-token", response.data.token);
       localStorage.setItem(
@@ -38,9 +34,9 @@ function Login() {
         password: "",
       });
 
-       setTimeout(() => {
-         window.location.href = "/dashboard";
-       }, 3000);
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 3000);
     } catch (err) {
       toast.dismiss();
       setError(err?.response?.data?.message);
@@ -48,7 +44,7 @@ function Login() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     // Check if user is already logged in
     const currentUser = getCurrentUser();
 
@@ -58,7 +54,7 @@ function Login() {
         window.location.href = "/dashboard";
       }, 3000);
     }
-  }, [])
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-5">

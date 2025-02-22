@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const getCurrentUser = () => {
   const user = localStorage.getItem("e-commerce-user-details");
 
@@ -55,4 +57,20 @@ const shortText = (text, maxLength = 50) => {
   return shortText;
 };
 
-export { getCurrentUser, getJwtToken, getReadableTimestamp, logout, shortText };
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL,
+  withCredentials: true,
+});
+
+export {
+  getCurrentUser,
+  getJwtToken,
+  getReadableTimestamp,
+  logout,
+  shortText,
+  api,
+};
+
+
+
+
